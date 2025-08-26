@@ -250,9 +250,9 @@ export class CreateBaselineSchema1735400000000 implements MigrationInterface {
     );
     await this.createIndexIfNotExists(
       queryRunner,
-      "IDX_users_role",
+      "IDX_users_roles",
       "users",
-      "role"
+      "roles"
     );
 
     // Preferences indexes
@@ -321,6 +321,25 @@ export class CreateBaselineSchema1735400000000 implements MigrationInterface {
     columnName: string
   ): Promise<void> {
     try {
+      // First check if table exists
+      const tableExists = await queryRunner.hasTable(tableName);
+      if (!tableExists) {
+        console.log(
+          `Table ${tableName} does not exist, skipping index ${indexName}`
+        );
+        return;
+      }
+
+      // Check if column exists
+      const columnExists = await queryRunner.hasColumn(tableName, columnName);
+      if (!columnExists) {
+        console.log(
+          `Column ${columnName} does not exist in table ${tableName}, skipping index ${indexName}`
+        );
+        return;
+      }
+
+      // Check if index already exists
       const indexExists = await queryRunner.query(
         `
         SELECT EXISTS (
@@ -336,9 +355,11 @@ export class CreateBaselineSchema1735400000000 implements MigrationInterface {
           `CREATE INDEX "${indexName}" ON "${tableName}" ("${columnName}")`
         );
         console.log(`Created index: ${indexName}`);
+      } else {
+        console.log(`Index ${indexName} already exists`);
       }
     } catch (error) {
-      console.log(`Index ${indexName} already exists or could not be created`);
+      console.log(`Index ${indexName} could not be created: ${error.message}`);
     }
   }
 
