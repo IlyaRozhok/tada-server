@@ -99,26 +99,85 @@ export class RefactorUserModel1752601418409 implements MigrationInterface {
             UPDATE "users" SET "role" = 'operator' WHERE 'operator' = ANY(string_to_array("roles", ',')) AND "role" != 'admin'
         `);
 
-    // Remove old columns from users table
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "full_name"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "age_range"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "phone"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "date_of_birth"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "nationality"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "occupation"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "industry"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "work_style"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "lifestyle"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "pets"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "smoker"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "hobbies"`);
-    await queryRunner.query(
-      `ALTER TABLE "users" DROP COLUMN "ideal_living_environment"`
-    );
-    await queryRunner.query(
-      `ALTER TABLE "users" DROP COLUMN "additional_info"`
-    );
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "roles"`);
+    // Remove old columns from users table if they exist
+    const hasFullName = await queryRunner.hasColumn("users", "full_name");
+    if (hasFullName) {
+      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "full_name"`);
+    }
+
+    const hasAgeRange = await queryRunner.hasColumn("users", "age_range");
+    if (hasAgeRange) {
+      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "age_range"`);
+    }
+
+    const hasPhone = await queryRunner.hasColumn("users", "phone");
+    if (hasPhone) {
+      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "phone"`);
+    }
+
+    const hasDateOfBirth = await queryRunner.hasColumn("users", "date_of_birth");
+    if (hasDateOfBirth) {
+      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "date_of_birth"`);
+    }
+
+    const hasNationality = await queryRunner.hasColumn("users", "nationality");
+    if (hasNationality) {
+      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "nationality"`);
+    }
+
+    const hasOccupation = await queryRunner.hasColumn("users", "occupation");
+    if (hasOccupation) {
+      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "occupation"`);
+    }
+
+    const hasIndustry = await queryRunner.hasColumn("users", "industry");
+    if (hasIndustry) {
+      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "industry"`);
+    }
+
+    const hasWorkStyle = await queryRunner.hasColumn("users", "work_style");
+    if (hasWorkStyle) {
+      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "work_style"`);
+    }
+
+    const hasLifestyle = await queryRunner.hasColumn("users", "lifestyle");
+    if (hasLifestyle) {
+      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "lifestyle"`);
+    }
+
+    const hasPets = await queryRunner.hasColumn("users", "pets");
+    if (hasPets) {
+      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "pets"`);
+    }
+
+    const hasSmoker = await queryRunner.hasColumn("users", "smoker");
+    if (hasSmoker) {
+      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "smoker"`);
+    }
+
+    const hasHobbies = await queryRunner.hasColumn("users", "hobbies");
+    if (hasHobbies) {
+      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "hobbies"`);
+    }
+
+    const hasIdealLiving = await queryRunner.hasColumn("users", "ideal_living_environment");
+    if (hasIdealLiving) {
+      await queryRunner.query(
+        `ALTER TABLE "users" DROP COLUMN "ideal_living_environment"`
+      );
+    }
+
+    const hasAdditionalInfo = await queryRunner.hasColumn("users", "additional_info");
+    if (hasAdditionalInfo) {
+      await queryRunner.query(
+        `ALTER TABLE "users" DROP COLUMN "additional_info"`
+      );
+    }
+
+    const hasRoles = await queryRunner.hasColumn("users", "roles");
+    if (hasRoles) {
+      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "roles"`);
+    }
 
     // Add foreign key constraints
     await queryRunner.query(`
@@ -143,42 +202,101 @@ export class RefactorUserModel1752601418409 implements MigrationInterface {
       `ALTER TABLE "tenant_profiles" DROP CONSTRAINT "FK_tenant_profiles_userId"`
     );
 
-    // Add back old columns to users table
-    await queryRunner.query(
-      `ALTER TABLE "users" ADD "full_name" character varying`
-    );
-    await queryRunner.query(
-      `ALTER TABLE "users" ADD "age_range" character varying`
-    );
-    await queryRunner.query(
-      `ALTER TABLE "users" ADD "phone" character varying`
-    );
-    await queryRunner.query(`ALTER TABLE "users" ADD "date_of_birth" date`);
-    await queryRunner.query(
-      `ALTER TABLE "users" ADD "nationality" character varying`
-    );
-    await queryRunner.query(
-      `ALTER TABLE "users" ADD "occupation" character varying`
-    );
-    await queryRunner.query(
-      `ALTER TABLE "users" ADD "industry" character varying`
-    );
-    await queryRunner.query(
-      `ALTER TABLE "users" ADD "work_style" character varying`
-    );
-    await queryRunner.query(`ALTER TABLE "users" ADD "lifestyle" text`);
-    await queryRunner.query(`ALTER TABLE "users" ADD "pets" character varying`);
-    await queryRunner.query(
-      `ALTER TABLE "users" ADD "smoker" boolean NOT NULL DEFAULT false`
-    );
-    await queryRunner.query(`ALTER TABLE "users" ADD "hobbies" text`);
-    await queryRunner.query(
-      `ALTER TABLE "users" ADD "ideal_living_environment" character varying`
-    );
-    await queryRunner.query(`ALTER TABLE "users" ADD "additional_info" text`);
-    await queryRunner.query(
-      `ALTER TABLE "users" ADD "roles" text NOT NULL DEFAULT 'tenant'`
-    );
+    // Add back old columns to users table if they don't exist
+    const hasFullName = await queryRunner.hasColumn("users", "full_name");
+    if (!hasFullName) {
+      await queryRunner.query(
+        `ALTER TABLE "users" ADD "full_name" character varying`
+      );
+    }
+
+    const hasAgeRange = await queryRunner.hasColumn("users", "age_range");
+    if (!hasAgeRange) {
+      await queryRunner.query(
+        `ALTER TABLE "users" ADD "age_range" character varying`
+      );
+    }
+
+    const hasPhone = await queryRunner.hasColumn("users", "phone");
+    if (!hasPhone) {
+      await queryRunner.query(
+        `ALTER TABLE "users" ADD "phone" character varying`
+      );
+    }
+
+    const hasDateOfBirth = await queryRunner.hasColumn("users", "date_of_birth");
+    if (!hasDateOfBirth) {
+      await queryRunner.query(`ALTER TABLE "users" ADD "date_of_birth" date`);
+    }
+
+    const hasNationality = await queryRunner.hasColumn("users", "nationality");
+    if (!hasNationality) {
+      await queryRunner.query(
+        `ALTER TABLE "users" ADD "nationality" character varying`
+      );
+    }
+
+    const hasOccupation = await queryRunner.hasColumn("users", "occupation");
+    if (!hasOccupation) {
+      await queryRunner.query(
+        `ALTER TABLE "users" ADD "occupation" character varying`
+      );
+    }
+
+    const hasIndustry = await queryRunner.hasColumn("users", "industry");
+    if (!hasIndustry) {
+      await queryRunner.query(
+        `ALTER TABLE "users" ADD "industry" character varying`
+      );
+    }
+
+    const hasWorkStyle = await queryRunner.hasColumn("users", "work_style");
+    if (!hasWorkStyle) {
+      await queryRunner.query(
+        `ALTER TABLE "users" ADD "work_style" character varying`
+      );
+    }
+
+    const hasLifestyle = await queryRunner.hasColumn("users", "lifestyle");
+    if (!hasLifestyle) {
+      await queryRunner.query(`ALTER TABLE "users" ADD "lifestyle" text`);
+    }
+
+    const hasPets = await queryRunner.hasColumn("users", "pets");
+    if (!hasPets) {
+      await queryRunner.query(`ALTER TABLE "users" ADD "pets" character varying`);
+    }
+
+    const hasSmoker = await queryRunner.hasColumn("users", "smoker");
+    if (!hasSmoker) {
+      await queryRunner.query(
+        `ALTER TABLE "users" ADD "smoker" boolean NOT NULL DEFAULT false`
+      );
+    }
+
+    const hasHobbies = await queryRunner.hasColumn("users", "hobbies");
+    if (!hasHobbies) {
+      await queryRunner.query(`ALTER TABLE "users" ADD "hobbies" text`);
+    }
+
+    const hasIdealLiving = await queryRunner.hasColumn("users", "ideal_living_environment");
+    if (!hasIdealLiving) {
+      await queryRunner.query(
+        `ALTER TABLE "users" ADD "ideal_living_environment" character varying`
+      );
+    }
+
+    const hasAdditionalInfo = await queryRunner.hasColumn("users", "additional_info");
+    if (!hasAdditionalInfo) {
+      await queryRunner.query(`ALTER TABLE "users" ADD "additional_info" text`);
+    }
+
+    const hasRoles = await queryRunner.hasColumn("users", "roles");
+    if (!hasRoles) {
+      await queryRunner.query(
+        `ALTER TABLE "users" ADD "roles" text NOT NULL DEFAULT 'tenant'`
+      );
+    }
 
     // Migrate data back from profiles
     await queryRunner.query(`

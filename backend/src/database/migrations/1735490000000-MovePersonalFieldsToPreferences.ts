@@ -20,7 +20,7 @@ export class MovePersonalFieldsToPreferences1735490000000
         "additional_info" = "users"."additional_info"
       FROM "users"
       WHERE "preferences"."user_id" = "users"."id"
-      AND "users"."is_operator" = false
+      AND "users"."roles" != 'operator'
     `);
 
     // For users who don't have preferences yet but are tenants, create preferences entries
@@ -37,7 +37,7 @@ export class MovePersonalFieldsToPreferences1735490000000
         NOW()
       FROM "users"
       LEFT JOIN "preferences" ON "preferences"."user_id" = "users"."id"
-      WHERE "users"."is_operator" = false 
+      WHERE "users"."roles" != 'operator' 
       AND "preferences"."id" IS NULL
       AND (
         "users"."hobbies" IS NOT NULL 
