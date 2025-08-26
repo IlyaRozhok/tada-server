@@ -6,9 +6,45 @@ export class MovePersonalFieldsToPreferences1735490000000
   name = "MovePersonalFieldsToPreferences1735490000000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Columns already exist, so just migrate the data
+    // First, add missing columns to preferences table if they don't exist
+    const hasHobbies = await queryRunner.hasColumn("preferences", "hobbies");
+    if (!hasHobbies) {
+      await queryRunner.query(`ALTER TABLE "preferences" ADD "hobbies" text`);
+    }
 
-    // Migrate existing data from users to preferences
+    const hasIdealLiving = await queryRunner.hasColumn(
+      "preferences",
+      "ideal_living_environment"
+    );
+    if (!hasIdealLiving) {
+      await queryRunner.query(
+        `ALTER TABLE "preferences" ADD "ideal_living_environment" character varying`
+      );
+    }
+
+    const hasPets = await queryRunner.hasColumn("preferences", "pets");
+    if (!hasPets) {
+      await queryRunner.query(
+        `ALTER TABLE "preferences" ADD "pets" character varying`
+      );
+    }
+
+    const hasSmoker = await queryRunner.hasColumn("preferences", "smoker");
+    if (!hasSmoker) {
+      await queryRunner.query(`ALTER TABLE "preferences" ADD "smoker" boolean`);
+    }
+
+    const hasAdditionalInfo = await queryRunner.hasColumn(
+      "preferences",
+      "additional_info"
+    );
+    if (!hasAdditionalInfo) {
+      await queryRunner.query(
+        `ALTER TABLE "preferences" ADD "additional_info" text`
+      );
+    }
+
+    // Now migrate existing data from users to preferences
     // Only migrate for users who have preferences entries and who are not operators
     await queryRunner.query(`
       UPDATE "preferences" 
@@ -64,14 +100,39 @@ export class MovePersonalFieldsToPreferences1735490000000
     `);
 
     // Clear the migrated data from preferences table
-    await queryRunner.query(`
-      UPDATE "preferences" 
-      SET 
-        "hobbies" = NULL,
-        "ideal_living_environment" = NULL,
-        "pets" = NULL,
-        "smoker" = NULL,
-        "additional_info" = NULL
-    `);
+    const hasHobbies = await queryRunner.hasColumn("preferences", "hobbies");
+    if (hasHobbies) {
+      await queryRunner.query(`UPDATE "preferences" SET "hobbies" = NULL`);
+    }
+
+    const hasIdealLiving = await queryRunner.hasColumn(
+      "preferences",
+      "ideal_living_environment"
+    );
+    if (hasIdealLiving) {
+      await queryRunner.query(
+        `UPDATE "preferences" SET "ideal_living_environment" = NULL`
+      );
+    }
+
+    const hasPets = await queryRunner.hasColumn("preferences", "pets");
+    if (hasPets) {
+      await queryRunner.query(`UPDATE "preferences" SET "pets" = NULL`);
+    }
+
+    const hasSmoker = await queryRunner.hasColumn("preferences", "smoker");
+    if (hasSmoker) {
+      await queryRunner.query(`UPDATE "preferences" SET "smoker" = NULL`);
+    }
+
+    const hasAdditionalInfo = await queryRunner.hasColumn(
+      "preferences",
+      "additional_info"
+    );
+    if (hasAdditionalInfo) {
+      await queryRunner.query(
+        `UPDATE "preferences" SET "additional_info" = NULL`
+      );
+    }
   }
 }

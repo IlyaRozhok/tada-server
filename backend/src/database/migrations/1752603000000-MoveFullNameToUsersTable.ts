@@ -69,7 +69,7 @@ export class MoveFullNameToUsersTable1752603000000
             SET "full_name" = "users"."full_name"
             FROM "users"
             WHERE "tenant_profiles"."userId" = "users"."id"
-            AND "users"."roles" = 'tenant'
+            AND "users"."roles" = 'tenantfix move personal fi
             AND "users"."full_name" IS NOT NULL
         `);
 
