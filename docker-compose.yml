@@ -7,6 +7,7 @@ services:
     image: rental_platform_api:prod
     restart: unless-stopped
     environment:
+      - NODE_ENV=production
       - PGSSLMODE=disable
       - DB_SSL=false
     env_file:
@@ -25,6 +26,7 @@ services:
     image: rental_platform_api:stage
     restart: unless-stopped
     environment:
+      - NODE_ENV=stage
       - PGSSLMODE=disable
       - DB_SSL=false
     env_file:
