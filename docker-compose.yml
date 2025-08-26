@@ -6,7 +6,9 @@ services:
       dockerfile: Dockerfile
     image: rental_platform_api:prod
     restart: unless-stopped
-
+    environment:
+      - PGSSLMODE=disable
+      - DB_SSL=false
     env_file:
       - ./env/.env.production
     ports:
@@ -22,6 +24,9 @@ services:
       dockerfile: Dockerfile
     image: rental_platform_api:stage
     restart: unless-stopped
+    environment:
+      - PGSSLMODE=disable
+      - DB_SSL=false
     env_file:
       - ./env/.env.stage
     ports:
