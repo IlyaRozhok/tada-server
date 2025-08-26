@@ -4,11 +4,32 @@ export class ChangePropertyTypeToArray1754915754587
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // First, add a new column for the array
-    await queryRunner.query(`
-            ALTER TABLE "preferences" 
-            ADD COLUMN "property_type_temp" text[] DEFAULT NULL
-        `);
+    // Check if property_type column exists
+    const hasPropertyType = await queryRunner.hasColumn(
+      "preferences",
+      "property_type"
+    );
+    if (!hasPropertyType) {
+      console.log("property_type column does not exist, skipping migration");
+      return;
+    }
+
+    // Check if property_type_temp column already exists
+    const hasPropertyTypeTemp = await queryRunner.hasColumn(
+      "preferences",
+      "property_type_temp"
+    );
+    if (hasPropertyTypeTemp) {
+      console.log(
+        "property_type_temp column already exists, skipping creation"
+      );
+    } else {
+      // First, add a new column for the array
+      await queryRunner.query(`
+              ALTER TABLE "preferences" 
+              ADD COLUMN "property_type_temp" text[] DEFAULT NULL
+          `);
+    }
 
     // Convert existing single values to arrays
     await queryRunner.query(`
@@ -35,11 +56,32 @@ export class ChangePropertyTypeToArray1754915754587
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Add a temporary column for the string
-    await queryRunner.query(`
-            ALTER TABLE "preferences" 
-            ADD COLUMN "property_type_temp" varchar(255) DEFAULT NULL
-        `);
+    // Check if property_type column exists (should be array type now)
+    const hasPropertyType = await queryRunner.hasColumn(
+      "preferences",
+      "property_type"
+    );
+    if (!hasPropertyType) {
+      console.log("property_type column does not exist, skipping rollback");
+      return;
+    }
+
+    // Check if property_type_temp column already exists
+    const hasPropertyTypeTemp = await queryRunner.hasColumn(
+      "preferences",
+      "property_type_temp"
+    );
+    if (hasPropertyTypeTemp) {
+      console.log(
+        "property_type_temp column already exists, skipping creation"
+      );
+    } else {
+      // Add a temporary column for the string
+      await queryRunner.query(`
+              ALTER TABLE "preferences" 
+              ADD COLUMN "property_type_temp" varchar(255) DEFAULT NULL
+          `);
+    }
 
     // Convert array back to single value (take first element)
     await queryRunner.query(`

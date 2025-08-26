@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm";
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from "typeorm";
 
 export class CreatePropertyMediaTable1735820000000
   implements MigrationInterface
@@ -163,4 +168,3 @@ export class CreatePropertyMediaTable1735820000000
     }
   }
 }
- 

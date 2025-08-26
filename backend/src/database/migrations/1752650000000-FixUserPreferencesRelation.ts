@@ -21,20 +21,36 @@ export class FixUserPreferencesRelation1752650000000
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // In case we need to rollback, re-add the column and constraint
-    // Note: This might not work if there are existing data conflicts
-    await queryRunner.query(`
-            ALTER TABLE "users" 
-            ADD COLUMN "preferencesId" uuid
-        `);
+    // Check if preferencesId column already exists
+    const hasPreferencesId = await queryRunner.hasColumn(
+      "users",
+      "preferencesId"
+    );
+    if (!hasPreferencesId) {
+      // In case we need to rollback, re-add the column and constraint
+      // Note: This might not work if there are existing data conflicts
+      await queryRunner.query(`
+              ALTER TABLE "users" 
+              ADD COLUMN "preferencesId" uuid
+          `);
+    }
 
-    await queryRunner.query(`
-            ALTER TABLE "users" 
-            ADD CONSTRAINT "FK_e43331081e8de087618267b07a5" 
-            FOREIGN KEY ("preferencesId") 
-            REFERENCES "preferences"("id") 
-            ON DELETE NO ACTION 
-            ON UPDATE NO ACTION
-        `);
+    // Check if constraint already exists
+    const hasConstraint = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'FK_e43331081e8de087618267b07a5'
+      )
+    `);
+    if (!hasConstraint[0].exists) {
+      await queryRunner.query(`
+              ALTER TABLE "users" 
+              ADD CONSTRAINT "FK_e43331081e8de087618267b07a5" 
+              FOREIGN KEY ("preferencesId") 
+              REFERENCES "preferences"("id") 
+              ON DELETE NO ACTION 
+              ON UPDATE NO ACTION
+          `);
+    }
   }
 }
