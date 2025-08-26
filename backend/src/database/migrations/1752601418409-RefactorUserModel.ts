@@ -4,57 +4,69 @@ export class RefactorUserModel1752601418409 implements MigrationInterface {
   name = "RefactorUserModel1752601418409";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Create tenant_profiles table
-    await queryRunner.query(`
-            CREATE TABLE "tenant_profiles" (
-                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-                "full_name" character varying NOT NULL,
-                "age_range" character varying,
-                "phone" character varying,
-                "date_of_birth" date,
-                "nationality" character varying,
-                "occupation" character varying,
-                "industry" character varying,
-                "work_style" character varying,
-                "lifestyle" text,
-                "pets" character varying,
-                "smoker" boolean NOT NULL DEFAULT false,
-                "hobbies" text,
-                "ideal_living_environment" character varying,
-                "additional_info" text,
-                "created_at" TIMESTAMP NOT NULL DEFAULT now(),
-                "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
-                "userId" uuid,
-                CONSTRAINT "PK_tenant_profiles" PRIMARY KEY ("id"),
-                CONSTRAINT "UQ_tenant_profiles_userId" UNIQUE ("userId")
-            )
-        `);
+    // Check if tenant_profiles table already exists
+    const hasTenantProfiles = await queryRunner.hasTable("tenant_profiles");
+    if (!hasTenantProfiles) {
+      // Create tenant_profiles table
+      await queryRunner.query(`
+              CREATE TABLE "tenant_profiles" (
+                  "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                  "full_name" character varying NOT NULL,
+                  "age_range" character varying,
+                  "phone" character varying,
+                  "date_of_birth" date,
+                  "nationality" character varying,
+                  "occupation" character varying,
+                  "industry" character varying,
+                  "work_style" character varying,
+                  "lifestyle" text,
+                  "pets" character varying,
+                  "smoker" boolean NOT NULL DEFAULT false,
+                  "hobbies" text,
+                  "ideal_living_environment" character varying,
+                  "additional_info" text,
+                  "created_at" TIMESTAMP NOT NULL DEFAULT now(),
+                  "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
+                  "userId" uuid,
+                  CONSTRAINT "PK_tenant_profiles" PRIMARY KEY ("id"),
+                  CONSTRAINT "UQ_tenant_profiles_userId" UNIQUE ("userId")
+              )
+          `);
+    } else {
+      console.log("tenant_profiles table already exists, skipping creation");
+    }
 
-    // Create operator_profiles table
-    await queryRunner.query(`
-            CREATE TABLE "operator_profiles" (
-                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-                "full_name" character varying NOT NULL,
-                "company_name" character varying,
-                "phone" character varying,
-                "business_address" character varying,
-                "company_registration" character varying,
-                "vat_number" character varying,
-                "license_number" character varying,
-                "years_experience" integer,
-                "operating_areas" text,
-                "property_types" text,
-                "services" text,
-                "business_description" text,
-                "website" character varying,
-                "linkedin" character varying,
-                "created_at" TIMESTAMP NOT NULL DEFAULT now(),
-                "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
-                "userId" uuid,
-                CONSTRAINT "PK_operator_profiles" PRIMARY KEY ("id"),
-                CONSTRAINT "UQ_operator_profiles_userId" UNIQUE ("userId")
-            )
-        `);
+    // Check if operator_profiles table already exists
+    const hasOperatorProfiles = await queryRunner.hasTable("operator_profiles");
+    if (!hasOperatorProfiles) {
+      // Create operator_profiles table
+      await queryRunner.query(`
+              CREATE TABLE "operator_profiles" (
+                  "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                  "full_name" character varying NOT NULL,
+                  "company_name" character varying,
+                  "phone" character varying,
+                  "business_address" character varying,
+                  "company_registration" character varying,
+                  "vat_number" character varying,
+                  "license_number" character varying,
+                  "years_experience" integer,
+                  "operating_areas" text,
+                  "property_types" text,
+                  "services" text,
+                  "business_description" text,
+                  "website" character varying,
+                  "linkedin" character varying,
+                  "created_at" TIMESTAMP NOT NULL DEFAULT now(),
+                  "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
+                  "userId" uuid,
+                  CONSTRAINT "PK_operator_profiles" PRIMARY KEY ("id"),
+                  CONSTRAINT "UQ_operator_profiles_userId" UNIQUE ("userId")
+              )
+          `);
+    } else {
+      console.log("operator_profiles table already exists, skipping creation");
+    }
 
     // Migrate existing user data to profiles
     await queryRunner.query(`
@@ -115,9 +127,14 @@ export class RefactorUserModel1752601418409 implements MigrationInterface {
       await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "phone"`);
     }
 
-    const hasDateOfBirth = await queryRunner.hasColumn("users", "date_of_birth");
+    const hasDateOfBirth = await queryRunner.hasColumn(
+      "users",
+      "date_of_birth"
+    );
     if (hasDateOfBirth) {
-      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "date_of_birth"`);
+      await queryRunner.query(
+        `ALTER TABLE "users" DROP COLUMN "date_of_birth"`
+      );
     }
 
     const hasNationality = await queryRunner.hasColumn("users", "nationality");
@@ -160,14 +177,20 @@ export class RefactorUserModel1752601418409 implements MigrationInterface {
       await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "hobbies"`);
     }
 
-    const hasIdealLiving = await queryRunner.hasColumn("users", "ideal_living_environment");
+    const hasIdealLiving = await queryRunner.hasColumn(
+      "users",
+      "ideal_living_environment"
+    );
     if (hasIdealLiving) {
       await queryRunner.query(
         `ALTER TABLE "users" DROP COLUMN "ideal_living_environment"`
       );
     }
 
-    const hasAdditionalInfo = await queryRunner.hasColumn("users", "additional_info");
+    const hasAdditionalInfo = await queryRunner.hasColumn(
+      "users",
+      "additional_info"
+    );
     if (hasAdditionalInfo) {
       await queryRunner.query(
         `ALTER TABLE "users" DROP COLUMN "additional_info"`
@@ -224,7 +247,10 @@ export class RefactorUserModel1752601418409 implements MigrationInterface {
       );
     }
 
-    const hasDateOfBirth = await queryRunner.hasColumn("users", "date_of_birth");
+    const hasDateOfBirth = await queryRunner.hasColumn(
+      "users",
+      "date_of_birth"
+    );
     if (!hasDateOfBirth) {
       await queryRunner.query(`ALTER TABLE "users" ADD "date_of_birth" date`);
     }
@@ -264,7 +290,9 @@ export class RefactorUserModel1752601418409 implements MigrationInterface {
 
     const hasPets = await queryRunner.hasColumn("users", "pets");
     if (!hasPets) {
-      await queryRunner.query(`ALTER TABLE "users" ADD "pets" character varying`);
+      await queryRunner.query(
+        `ALTER TABLE "users" ADD "pets" character varying`
+      );
     }
 
     const hasSmoker = await queryRunner.hasColumn("users", "smoker");
@@ -279,14 +307,20 @@ export class RefactorUserModel1752601418409 implements MigrationInterface {
       await queryRunner.query(`ALTER TABLE "users" ADD "hobbies" text`);
     }
 
-    const hasIdealLiving = await queryRunner.hasColumn("users", "ideal_living_environment");
+    const hasIdealLiving = await queryRunner.hasColumn(
+      "users",
+      "ideal_living_environment"
+    );
     if (!hasIdealLiving) {
       await queryRunner.query(
         `ALTER TABLE "users" ADD "ideal_living_environment" character varying`
       );
     }
 
-    const hasAdditionalInfo = await queryRunner.hasColumn("users", "additional_info");
+    const hasAdditionalInfo = await queryRunner.hasColumn(
+      "users",
+      "additional_info"
+    );
     if (!hasAdditionalInfo) {
       await queryRunner.query(`ALTER TABLE "users" ADD "additional_info" text`);
     }
@@ -334,8 +368,15 @@ export class RefactorUserModel1752601418409 implements MigrationInterface {
     await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "status"`);
     await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "role"`);
 
-    // Drop profile tables
-    await queryRunner.query(`DROP TABLE "operator_profiles"`);
-    await queryRunner.query(`DROP TABLE "tenant_profiles"`);
+    // Drop profile tables if they exist
+    const hasOperatorProfiles = await queryRunner.hasTable("operator_profiles");
+    if (hasOperatorProfiles) {
+      await queryRunner.query(`DROP TABLE "operator_profiles"`);
+    }
+
+    const hasTenantProfiles = await queryRunner.hasTable("tenant_profiles");
+    if (hasTenantProfiles) {
+      await queryRunner.query(`DROP TABLE "tenant_profiles"`);
+    }
   }
 }
