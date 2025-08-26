@@ -95,21 +95,30 @@ export class RefactorUserModel1752601418409 implements MigrationInterface {
             WHERE 'operator' = ANY(string_to_array("roles", ','))
         `);
 
-    // Add new columns to users table
-    await queryRunner.query(
-      `ALTER TABLE "users" ADD "role" character varying NOT NULL DEFAULT 'tenant'`
-    );
-    await queryRunner.query(
-      `ALTER TABLE "users" ADD "status" character varying NOT NULL DEFAULT 'active'`
-    );
+    // Add new columns to users table if they don't exist
+    const hasRoleColumn = await queryRunner.hasColumn("users", "role");
+    if (!hasRoleColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "users" ADD "role" character varying NOT NULL DEFAULT 'tenant'`
+      );
+    }
 
-    // Update role column based on existing roles
-    await queryRunner.query(`
-            UPDATE "users" SET "role" = 'admin' WHERE 'admin' = ANY(string_to_array("roles", ','))
-        `);
-    await queryRunner.query(`
-            UPDATE "users" SET "role" = 'operator' WHERE 'operator' = ANY(string_to_array("roles", ',')) AND "role" != 'admin'
-        `);
+    const hasStatusColumn = await queryRunner.hasColumn("users", "status");
+    if (!hasStatusColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "users" ADD "status" character varying NOT NULL DEFAULT 'active'`
+      );
+    }
+
+    // Update role column based on existing roles (only if role column was just added)
+    if (!hasRoleColumn) {
+      await queryRunner.query(`
+              UPDATE "users" SET "role" = 'admin' WHERE 'admin' = ANY(string_to_array("roles", ','))
+          `);
+      await queryRunner.query(`
+              UPDATE "users" SET "role" = 'operator' WHERE 'operator' = ANY(string_to_array("roles", ',')) AND "role" != 'admin'
+          `);
+    }
 
     // Remove old columns from users table if they exist
     const hasFullName = await queryRunner.hasColumn("users", "full_name");
@@ -197,10 +206,8 @@ export class RefactorUserModel1752601418409 implements MigrationInterface {
       );
     }
 
-    const hasRoles = await queryRunner.hasColumn("users", "roles");
-    if (hasRoles) {
-      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "roles"`);
-    }
+    // Keep the roles column - don't remove it
+    console.log("Keeping roles column in users table");
 
     // Add foreign key constraints
     await queryRunner.query(`
@@ -361,12 +368,22 @@ export class RefactorUserModel1752601418409 implements MigrationInterface {
             WHERE "users"."id" = op."userId"
         `);
 
-    // Update roles column based on role
-    await queryRunner.query(`UPDATE "users" SET "roles" = "role"`);
+    // Update roles column based on role (only if roles column exists)
+    const hasRolesColumn = await queryRunner.hasColumn("users", "roles");
+    if (hasRolesColumn) {
+      await queryRunner.query(`UPDATE "users" SET "roles" = "role"`);
+    }
 
-    // Remove new columns
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "status"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "role"`);
+    // Remove new columns if they exist
+    const hasStatusColumn = await queryRunner.hasColumn("users", "status");
+    if (hasStatusColumn) {
+      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "status"`);
+    }
+
+    const hasRoleColumn = await queryRunner.hasColumn("users", "role");
+    if (hasRoleColumn) {
+      await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "role"`);
+    }
 
     // Drop profile tables if they exist
     const hasOperatorProfiles = await queryRunner.hasTable("operator_profiles");
