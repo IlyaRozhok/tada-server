@@ -6,13 +6,13 @@ export class SeedTestProperties1735470000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // First, let's get an operator user to assign as the property owner
     const operatorUser = await queryRunner.query(
-      `SELECT id FROM users WHERE role = 'operator' LIMIT 1`
+      `SELECT id FROM users WHERE roles = 'operator' LIMIT 1`
     );
 
     if (operatorUser.length === 0) {
       // Create a test operator if none exists
       await queryRunner.query(`
-        INSERT INTO users (id, email, name, role, password_hash, created_at, updated_at)
+        INSERT INTO users (id, email, full_name, roles, password, created_at, updated_at)
         VALUES (
           uuid_generate_v4(),
           'operator@test.com',

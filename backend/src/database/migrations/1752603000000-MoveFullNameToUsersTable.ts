@@ -24,7 +24,7 @@ export class MoveFullNameToUsersTable1752603000000
             SET "full_name" = "tenant_profiles"."full_name"
             FROM "tenant_profiles"
             WHERE "users"."id" = "tenant_profiles"."userId"
-            AND "users"."role" = 'tenant'
+            AND "users"."roles" = 'tenant'
             AND ("users"."full_name" IS NULL OR "users"."full_name" = '')
             AND "tenant_profiles"."full_name" IS NOT NULL
         `);
@@ -35,7 +35,7 @@ export class MoveFullNameToUsersTable1752603000000
             SET "full_name" = "operator_profiles"."full_name"
             FROM "operator_profiles"
             WHERE "users"."id" = "operator_profiles"."userId"
-            AND "users"."role" = 'operator'
+            AND "users"."roles" = 'operator'
             AND ("users"."full_name" IS NULL OR "users"."full_name" = '')
             AND "operator_profiles"."full_name" IS NOT NULL
         `);
@@ -69,7 +69,7 @@ export class MoveFullNameToUsersTable1752603000000
             SET "full_name" = "users"."full_name"
             FROM "users"
             WHERE "tenant_profiles"."userId" = "users"."id"
-            AND "users"."role" = 'tenant'
+            AND "users"."roles" = 'tenant'
             AND "users"."full_name" IS NOT NULL
         `);
 
@@ -79,7 +79,7 @@ export class MoveFullNameToUsersTable1752603000000
             SET "full_name" = "users"."full_name"
             FROM "users"
             WHERE "operator_profiles"."userId" = "users"."id"
-            AND "users"."role" = 'operator'
+            AND "users"."roles" = 'operator'
             AND "users"."full_name" IS NOT NULL
         `);
 

@@ -35,7 +35,7 @@ export class MoveShortlistToTenantProfile1752615000000
           FROM "users" u
           JOIN "tenant_profiles" tp ON u.id = tp."userId"
           LEFT JOIN "shortlist" s ON u.id = s."userId"
-          WHERE u.role = 'tenant'
+          WHERE u.roles = 'tenant'
           GROUP BY u.id, tp.id
           HAVING COUNT(s."propertyId") > 0
         ) as subquery
