@@ -47,16 +47,15 @@ export class User {
   password: string;
 
   @ApiProperty({
-    description: "Primary user role",
-    example: "tenant",
-    enum: UserRole,
+    description: "User roles (comma-separated)",
+    example: "tenant,operator",
   })
   @Column({
-    type: "enum",
-    enum: UserRole,
+    type: "text",
     nullable: true,
+    default: "tenant",
   })
-  role: UserRole;
+  roles: string;
 
   @ApiProperty({
     description: "User account status",
@@ -133,8 +132,13 @@ export class User {
   @OneToMany(() => Shortlist, (shortlist) => shortlist.user)
   shortlists: Shortlist[];
 
-  // Computed property for backward compatibility
-  get roles(): string[] {
-    return [this.role];
+  // Helper method to get roles as array
+  getRolesArray(): string[] {
+    return this.roles ? this.roles.split(",").map((r) => r.trim()) : ["tenant"];
+  }
+
+  // Helper method to check if user has specific role
+  hasRole(role: string): boolean {
+    return this.getRolesArray().includes(role);
   }
 }

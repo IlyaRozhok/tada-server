@@ -87,15 +87,15 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
-    const user = this.userRepository.create({
+    const userData = this.userRepository.create({
       email: email.toLowerCase(),
       password: hashedPassword,
-      role: role as UserRole,
+      roles: role as string,
       status: UserStatus.Active,
     });
 
     try {
-      const savedUser = await this.userRepository.save(user);
+      const savedUser = await this.userRepository.save(userData);
 
       // Create profile based on role
       if (role === UserRole.Tenant) {
@@ -120,7 +120,7 @@ export class AuthService {
       const payload = {
         sub: savedUser.id,
         email: savedUser.email,
-        role: savedUser.role,
+        role: savedUser.roles,
       };
       const access_token = this.jwtService.sign(payload);
 
@@ -160,7 +160,7 @@ export class AuthService {
         "id",
         "email",
         "password",
-        "role",
+        "roles",
         "status",
         "full_name",
         "provider",
@@ -199,7 +199,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       email: user.email,
-      role: user.role,
+      role: user.roles,
     };
     const access_token = this.jwtService.sign(payload);
 
@@ -287,7 +287,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       email: user.email,
-      role: user.role,
+      role: user.roles,
     };
     const access_token = this.jwtService.sign(payload);
 
@@ -410,18 +410,18 @@ export class AuthService {
       }
 
       // Create user with role
-      const user = this.userRepository.create({
+      const userData = this.userRepository.create({
         email: email.toLowerCase(),
         google_id,
         full_name: full_name || null,
         avatar_url: avatar_url || null,
-        role: role as UserRole,
+        roles: role as string,
         status: UserStatus.Active,
         // Generate random password for OAuth users
         password: await bcrypt.hash(crypto.randomBytes(32).toString("hex"), 10),
       });
 
-      const savedUser = await this.userRepository.save(user);
+      const savedUser = await this.userRepository.save(userData);
 
       // Create role-specific profiles
       if (role === UserRole.Tenant) {
@@ -490,12 +490,12 @@ export class AuthService {
         throw new NotFoundException("User not found");
       }
 
-      if (user.role) {
+      if (user.roles) {
         throw new BadRequestException("User already has a role assigned");
       }
 
       // Set the role
-      user.role = role as UserRole;
+      user.roles = role as string;
       await this.userRepository.save(user);
 
       // Create appropriate profile
@@ -533,7 +533,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       email: user.email,
-      role: user.role,
+      role: user.roles,
     };
     const access_token = this.jwtService.sign(payload);
 

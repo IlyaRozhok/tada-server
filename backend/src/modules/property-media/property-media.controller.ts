@@ -59,7 +59,7 @@ export class PropertyMediaController {
       file,
       undefined,
       undefined,
-      req.user.role
+      req.user.roles
     );
   }
 
@@ -87,7 +87,7 @@ export class PropertyMediaController {
     return await this.propertyMediaService.deleteMedia(
       mediaId,
       req.user.id,
-      req.user.role
+      req.user.roles
     );
   }
 
@@ -136,7 +136,7 @@ export class PropertyMediaController {
       propertyId,
       user.id,
       mediaOrders,
-      user.role
+      user.roles
     );
   }
 
@@ -166,7 +166,7 @@ export class PropertyMediaController {
     return await this.propertyMediaService.setFeaturedMedia(
       mediaId,
       user.id,
-      user.role
+      user.roles
     );
   }
 }

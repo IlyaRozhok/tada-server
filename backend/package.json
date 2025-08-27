@@ -32,7 +32,11 @@
     "test:oauth-flow": "ts-node scripts/test-oauth-flow.ts",
     "deploy:migrations": "ts-node scripts/deploy-migrations.ts",
     "deploy:migrations:prod": "node dist/scripts/deploy-migrations.js",
-    "test:complete-migration": "ts-node scripts/test-complete-migration.ts"
+    "test:complete-migration": "ts-node scripts/test-complete-migration.ts",
+    "test:local-migration": "ts-node scripts/test-local-migration.ts",
+    "test:local-migration:js": "node dist/scripts/test-local-migration.js",
+    "test:prod-migration": "ts-node scripts/test-prod-migration.ts",
+    "test:user-flow": "ts-node scripts/test-user-flow.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.842.0",

@@ -73,7 +73,7 @@ export class ShortlistService {
       throw new NotFoundException("User not found");
     }
 
-    if (user.role !== UserRole.Tenant) {
+    if (!user.hasRole("tenant")) {
       throw new BadRequestException("Only tenants can have shortlists");
     }
 

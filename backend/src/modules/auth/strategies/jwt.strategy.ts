@@ -40,7 +40,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // Ensure the user object has all necessary computed properties
     const userWithComputedFields = {
       ...user,
-      roles: user.roles, // This calls the getter
+      roles: user.roles,
     };
 
     return userWithComputedFields;

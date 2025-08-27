@@ -18,64 +18,95 @@ export class CreateCompleteSchema1755000000000 implements MigrationInterface {
 
     // Create users table
     console.log("📝 Creating users table...");
-    await queryRunner.createTable(
-      new Table({
-        name: "users",
-        columns: [
-          {
-            name: "id",
-            type: "uuid",
-            isPrimary: true,
-            generationStrategy: "uuid",
-            default: "uuid_generate_v4()",
-          },
-          {
-            name: "email",
-            type: "varchar",
-            isUnique: true,
-            isNullable: false,
-          },
-          {
-            name: "full_name",
-            type: "varchar",
-            isNullable: true,
-          },
-          {
-            name: "roles",
-            type: "text",
-            isNullable: true,
-            default: "'tenant'",
-          },
-          {
-            name: "password",
-            type: "varchar",
-            isNullable: true,
-          },
-          {
-            name: "google_id",
-            type: "varchar",
-            isNullable: true,
-          },
-          {
-            name: "phone",
-            type: "varchar",
-            isNullable: true,
-          },
-          {
-            name: "created_at",
-            type: "timestamp",
-            default: "CURRENT_TIMESTAMP",
-          },
-          {
-            name: "updated_at",
-            type: "timestamp",
-            default: "CURRENT_TIMESTAMP",
-            onUpdate: "CURRENT_TIMESTAMP",
-          },
-        ],
-      }),
-      true
-    );
+
+    // Check if table already exists
+    const usersTableExists = await queryRunner.hasTable("users");
+    if (usersTableExists) {
+      console.log("⚠️ Users table already exists, skipping...");
+    } else {
+      await queryRunner.createTable(
+        new Table({
+          name: "users",
+          columns: [
+            {
+              name: "id",
+              type: "uuid",
+              isPrimary: true,
+              generationStrategy: "uuid",
+              default: "uuid_generate_v4()",
+            },
+            {
+              name: "email",
+              type: "varchar",
+              isUnique: true,
+              isNullable: false,
+            },
+            {
+              name: "full_name",
+              type: "varchar",
+              isNullable: true,
+            },
+            {
+              name: "roles",
+              type: "text",
+              isNullable: true,
+              default: "'tenant'",
+            },
+            {
+              name: "status",
+              type: "enum",
+              enum: ["active", "inactive", "suspended"],
+              default: "'active'",
+              isNullable: false,
+            },
+            {
+              name: "password",
+              type: "varchar",
+              isNullable: true,
+            },
+            {
+              name: "google_id",
+              type: "varchar",
+              isNullable: true,
+            },
+            {
+              name: "provider",
+              type: "varchar",
+              default: "'local'",
+              isNullable: false,
+            },
+            {
+              name: "avatar_url",
+              type: "varchar",
+              isNullable: true,
+            },
+            {
+              name: "email_verified",
+              type: "boolean",
+              default: "false",
+              isNullable: false,
+            },
+            {
+              name: "phone",
+              type: "varchar",
+              isNullable: true,
+            },
+            {
+              name: "created_at",
+              type: "timestamp",
+              default: "CURRENT_TIMESTAMP",
+            },
+            {
+              name: "updated_at",
+              type: "timestamp",
+              default: "CURRENT_TIMESTAMP",
+              onUpdate: "CURRENT_TIMESTAMP",
+            },
+          ],
+        }),
+        true
+      );
+    }
 
     // Create preferences table
     console.log("📝 Creating preferences table...");
@@ -196,6 +227,36 @@ export class CreateCompleteSchema1755000000000 implements MigrationInterface {
             isNullable: true,
           },
           {
+            name: "lifestyle_features",
+            type: "text",
+            isNullable: true,
+          },
+          {
+            name: "social_features",
+            type: "text",
+            isNullable: true,
+          },
+          {
+            name: "work_features",
+            type: "text",
+            isNullable: true,
+          },
+          {
+            name: "convenience_features",
+            type: "text",
+            isNullable: true,
+          },
+          {
+            name: "pet_friendly_features",
+            type: "text",
+            isNullable: true,
+          },
+          {
+            name: "luxury_features",
+            type: "text",
+            isNullable: true,
+          },
+          {
             name: "let_duration",
             type: "varchar",
             isNullable: true,
@@ -263,6 +324,76 @@ export class CreateCompleteSchema1755000000000 implements MigrationInterface {
             name: "userId",
             type: "uuid",
             isNullable: false,
+          },
+          {
+            name: "full_name",
+            type: "varchar",
+            isNullable: true,
+          },
+          {
+            name: "age_range",
+            type: "varchar",
+            isNullable: true,
+          },
+          {
+            name: "phone",
+            type: "varchar",
+            isNullable: true,
+          },
+          {
+            name: "date_of_birth",
+            type: "date",
+            isNullable: true,
+          },
+          {
+            name: "nationality",
+            type: "varchar",
+            isNullable: true,
+          },
+          {
+            name: "occupation",
+            type: "varchar",
+            isNullable: true,
+          },
+          {
+            name: "industry",
+            type: "varchar",
+            isNullable: true,
+          },
+          {
+            name: "work_style",
+            type: "varchar",
+            isNullable: true,
+          },
+          {
+            name: "lifestyle",
+            type: "text",
+            isNullable: true,
+          },
+          {
+            name: "pets",
+            type: "varchar",
+            isNullable: true,
+          },
+          {
+            name: "smoker",
+            type: "boolean",
+            isNullable: true,
+          },
+          {
+            name: "hobbies",
+            type: "text",
+            isNullable: true,
+          },
+          {
+            name: "ideal_living_environment",
+            type: "varchar",
+            isNullable: true,
+          },
+          {
+            name: "additional_info",
+            type: "text",
+            isNullable: true,
           },
           {
             name: "shortlisted_properties",

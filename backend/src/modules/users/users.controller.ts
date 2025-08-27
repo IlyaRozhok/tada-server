@@ -165,7 +165,7 @@ export class UsersController {
     @Req() req: any
   ): Promise<{ user: User; access_token?: string }> {
     // Only allow users to update their own role or admins to update any role
-    if (req.user.id !== id && req.user.role !== UserRole.Admin) {
+    if (req.user.id !== id && !req.user.hasRole("admin")) {
       throw new Error("Unauthorized");
     }
 

@@ -117,7 +117,7 @@ export class PropertiesService {
       relations: ["tenantProfile"],
     });
 
-    if (!user || user.role !== UserRole.Tenant || !user.tenantProfile) {
+    if (!user || !user.hasRole("tenant") || !user.tenantProfile) {
       return properties.map((p) => ({ ...p, isShortlisted: false }));
     }
 

@@ -14,7 +14,6 @@ export class OperatorController {
   async getDashboard(@Req() req) {
     console.log("🔍 Operator Dashboard Request:", {
       user_id: req.user?.id,
-      user_role: req.user?.role,
       user_roles: req.user?.roles,
       user_email: req.user?.email,
       has_tenant_profile: !!req.user?.tenantProfile,

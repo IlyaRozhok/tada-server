@@ -28,7 +28,7 @@ export class UsersService {
       select: [
         "id",
         "email",
-        "role",
+        "roles",
         "status",
         "full_name",
         "created_at",
@@ -59,7 +59,7 @@ export class UsersService {
     if (updateUserDto.full_name) user.full_name = updateUserDto.full_name;
 
     // Update profile based on role
-    if (user.role === UserRole.Tenant && user.tenantProfile) {
+    if (user.hasRole("tenant") && user.tenantProfile) {
       if (updateUserDto.phone) user.tenantProfile.phone = updateUserDto.phone;
       if (
         updateUserDto.date_of_birth &&
@@ -92,7 +92,7 @@ export class UsersService {
         user.tenantProfile.additional_info = updateUserDto.additional_info;
 
       await this.tenantProfileRepository.save(user.tenantProfile);
-    } else if (user.role === UserRole.Operator && user.operatorProfile) {
+    } else if (user.hasRole("operator") && user.operatorProfile) {
       if (updateUserDto.phone) user.operatorProfile.phone = updateUserDto.phone;
       if (
         updateUserDto.date_of_birth &&
@@ -124,7 +124,7 @@ export class UsersService {
       select: [
         "id",
         "email",
-        "role",
+        "roles",
         "status",
         "full_name",
         "created_at",
@@ -251,7 +251,7 @@ export class UsersService {
       throw new NotFoundException(`User with id ${id} not found`);
     }
 
-    const oldRole = user.role;
+    const oldRoles = user.roles;
 
     // Update basic user fields
     if (dto.email !== undefined) user.email = dto.email;
@@ -259,8 +259,8 @@ export class UsersService {
     if (dto.full_name !== undefined) user.full_name = dto.full_name;
 
     // Handle role changes
-    if (dto.role !== undefined && dto.role !== oldRole) {
-      user.role = dto.role;
+    if (dto.role !== undefined && dto.role !== oldRoles) {
+      user.roles = dto.role;
 
       // If changing to tenant but no tenant profile exists, create one
       if (dto.role === UserRole.Tenant && !user.tenantProfile) {
@@ -285,10 +285,10 @@ export class UsersService {
 
     // Handle phone number updates in the appropriate profile
     if (dto.phone !== undefined) {
-      if (user.role === UserRole.Tenant && user.tenantProfile) {
+      if (user.hasRole("tenant") && user.tenantProfile) {
         user.tenantProfile.phone = dto.phone;
         await this.tenantProfileRepository.save(user.tenantProfile);
-      } else if (user.role === UserRole.Operator && user.operatorProfile) {
+      } else if (user.hasRole("operator") && user.operatorProfile) {
         user.operatorProfile.phone = dto.phone;
         await this.operatorProfileRepository.save(user.operatorProfile);
       }
@@ -313,14 +313,14 @@ export class UsersService {
           UserRole.Tenant
         : userRole;
 
-    const user = this.userRepository.create({
+    const userData = this.userRepository.create({
       email: dto.email,
-      role: normalizedRole,
+      roles: normalizedRole,
       status: UserStatus.Active,
       password: await bcrypt.hash(dto.password, 10),
       full_name: dto.full_name,
     });
-    const savedUser = await this.userRepository.save(user);
+    const savedUser = await this.userRepository.save(userData);
 
     // Create appropriate profile based on role
     if (normalizedRole === UserRole.Tenant) {
@@ -425,7 +425,7 @@ export class UsersService {
         : role;
 
     // Update the user's role
-    await this.userRepository.update(userId, { role: roleEnum });
+    await this.userRepository.update(userId, { roles: roleEnum });
 
     // Return the updated user
     return this.findOne(userId);

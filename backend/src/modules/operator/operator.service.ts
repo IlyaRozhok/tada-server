@@ -63,11 +63,11 @@ export class OperatorService {
         .leftJoinAndSelect("user.preferences", "preferences")
         .leftJoinAndSelect("user.tenantProfile", "tenantProfile")
         .where("property.operator_id = :operatorId", { operatorId })
-        .andWhere("user.role = :role", { role: "tenant" })
+        .andWhere("user.roles LIKE :role", { role: "%tenant%" })
         .select([
           "user.id",
           "user.email",
-          "user.role",
+          "user.roles",
           "tenantProfile.id",
           "tenantProfile.full_name",
           "preferences.id",
