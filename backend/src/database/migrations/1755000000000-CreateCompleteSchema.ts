@@ -669,8 +669,36 @@ export class CreateCompleteSchema1755000000000 implements MigrationInterface {
             isNullable: false,
           },
           {
-            name: "media_type",
+            name: "type",
             type: "varchar",
+            default: "'image'",
+            isNullable: false,
+          },
+          {
+            name: "mime_type",
+            type: "varchar",
+            isNullable: false,
+          },
+          {
+            name: "original_filename",
+            type: "varchar",
+            isNullable: false,
+          },
+          {
+            name: "file_size",
+            type: "bigint",
+            isNullable: false,
+          },
+          {
+            name: "order_index",
+            type: "int",
+            default: "0",
+            isNullable: false,
+          },
+          {
+            name: "is_featured",
+            type: "boolean",
+            default: "false",
             isNullable: false,
           },
           {
@@ -703,12 +731,12 @@ export class CreateCompleteSchema1755000000000 implements MigrationInterface {
             default: "uuid_generate_v4()",
           },
           {
-            name: "user_id",
+            name: "userId",
             type: "uuid",
             isNullable: false,
           },
           {
-            name: "property_id",
+            name: "propertyId",
             type: "uuid",
             isNullable: false,
           },
@@ -736,12 +764,12 @@ export class CreateCompleteSchema1755000000000 implements MigrationInterface {
             default: "uuid_generate_v4()",
           },
           {
-            name: "user_id",
+            name: "userId",
             type: "uuid",
             isNullable: false,
           },
           {
-            name: "property_id",
+            name: "propertyId",
             type: "uuid",
             isNullable: false,
           },
@@ -817,7 +845,7 @@ export class CreateCompleteSchema1755000000000 implements MigrationInterface {
     await queryRunner.createForeignKey(
       "favourites",
       new TableForeignKey({
-        columnNames: ["user_id"],
+        columnNames: ["userId"],
         referencedColumnNames: ["id"],
         referencedTableName: "users",
         onDelete: "CASCADE",
@@ -828,7 +856,7 @@ export class CreateCompleteSchema1755000000000 implements MigrationInterface {
     await queryRunner.createForeignKey(
       "favourites",
       new TableForeignKey({
-        columnNames: ["property_id"],
+        columnNames: ["propertyId"],
         referencedColumnNames: ["id"],
         referencedTableName: "properties",
         onDelete: "CASCADE",
@@ -839,7 +867,7 @@ export class CreateCompleteSchema1755000000000 implements MigrationInterface {
     await queryRunner.createForeignKey(
       "shortlist",
       new TableForeignKey({
-        columnNames: ["user_id"],
+        columnNames: ["userId"],
         referencedColumnNames: ["id"],
         referencedTableName: "users",
         onDelete: "CASCADE",
@@ -850,7 +878,7 @@ export class CreateCompleteSchema1755000000000 implements MigrationInterface {
     await queryRunner.createForeignKey(
       "shortlist",
       new TableForeignKey({
-        columnNames: ["property_id"],
+        columnNames: ["propertyId"],
         referencedColumnNames: ["id"],
         referencedTableName: "properties",
         onDelete: "CASCADE",
