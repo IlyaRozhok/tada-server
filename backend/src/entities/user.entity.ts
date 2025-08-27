@@ -105,6 +105,13 @@ export class User {
   @Column({ default: false })
   email_verified: boolean;
 
+  @ApiProperty({
+    description: "User phone number",
+    example: "+44 7700 900123",
+  })
+  @Column({ nullable: true })
+  phone: string;
+
   @ApiProperty({ description: "User creation date" })
   @CreateDateColumn()
   created_at: Date;
