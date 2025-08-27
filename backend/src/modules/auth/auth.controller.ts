@@ -146,15 +146,23 @@ export class AuthController {
   @Get("me")
   @UseGuards(JwtAuthGuard)
   async getProfile(@CurrentUser() user: User) {
-    const fullUser = await this.authService.findUserWithProfile(user.id);
+    // Упрощенный профиль с информацией для редиректа
+    const role = user.roles;
+    let dashboardPath = "/";
+
+    if (role === "tenant") {
+      dashboardPath = "/dashboard/tenant";
+    } else if (role === "operator") {
+      dashboardPath = "/dashboard/operator";
+    }
+
     return {
       user: {
-        ...fullUser,
-        full_name:
-          fullUser.full_name ||
-          fullUser.tenantProfile?.full_name ||
-          fullUser.operatorProfile?.full_name ||
-          null,
+        id: user.id,
+        email: user.email,
+        roles: user.roles,
+        full_name: user.full_name || null,
+        dashboard: dashboardPath,
       },
     };
   }
@@ -287,7 +295,7 @@ export class AuthController {
           id: user.id,
           email: user.email,
           full_name: user.full_name,
-          role: user.roles,
+          roles: user.roles,
           avatar_url: user.avatar_url,
           tenantProfile: user.tenantProfile || null,
           operatorProfile: user.operatorProfile || null,

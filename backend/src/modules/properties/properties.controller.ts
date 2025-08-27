@@ -21,8 +21,7 @@ import { PropertiesService } from "./properties.service";
 import { CreatePropertyDto } from "./dto/create-property.dto";
 import { Property } from "../../entities/property.entity";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
-import { Roles } from "../../common/decorators/roles.decorator";
-import { RolesGuard } from "../../common/guards/roles.guard";
+
 @ApiTags("Properties")
 @Controller("properties")
 export class PropertiesController {
@@ -39,8 +38,7 @@ export class PropertiesController {
   })
   @ApiConsumes("application/json")
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles("operator", "admin")
+  @UseGuards(JwtAuthGuard) // Упрощено - доступно любому аутентифицированному пользователю
   @Post()
   async create(@Body() createPropertyDto: CreatePropertyDto, @Request() req) {
     return await this.propertiesService.create(
@@ -58,8 +56,7 @@ export class PropertiesController {
   })
   @ApiConsumes("application/json")
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles("operator", "admin")
+  @UseGuards(JwtAuthGuard) // Упрощено - доступно любому аутентифицированному пользователю
   @Patch(":id")
   async update(
     @Param("id") id: string,
@@ -81,8 +78,7 @@ export class PropertiesController {
     type: [Property],
   })
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles("operator")
+  @UseGuards(JwtAuthGuard) // Упрощено - доступно любому аутентифицированному пользователю
   @Get("my-properties")
   async getMyProperties(@Request() req) {
     return await this.propertiesService.findByOperator(req.user.id);
@@ -113,7 +109,6 @@ export class PropertiesController {
     @Query("sortBy") sortBy?: string,
     @Query("order") order?: "ASC" | "DESC"
   ) {
-  
     const pageNum = parseInt(page as any) || 1;
     const limitNum = Math.min(parseInt(limit as any) || 12, 12);
 
@@ -125,7 +120,6 @@ export class PropertiesController {
       order
     );
 
-  
     return {
       data: result.properties,
       total: result.total,
@@ -186,8 +180,7 @@ export class PropertiesController {
     type: [Property],
   })
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @Roles("tenant")
+  @UseGuards(JwtAuthGuard) // Упрощено - доступно любому аутентифицированному пользователю
   @Get("matched")
   async getMatchedProperties(@Request() req, @Query("limit") limit?: number) {
     return await this.propertiesService.findMatchedProperties(
@@ -204,8 +197,7 @@ export class PropertiesController {
     description: "Operator statistics retrieved",
   })
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles("operator")
+  @UseGuards(JwtAuthGuard) // Упрощено - доступно любому аутентифицированному пользователю
   @Get("operator-stats")
   async getOperatorStats(@Request() req) {
     return await this.propertiesService.getOperatorStatistics(req.user.id);
@@ -219,8 +211,7 @@ export class PropertiesController {
     description: "Tenants who shortlisted the property",
   })
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles("operator")
+  @UseGuards(JwtAuthGuard) // Упрощено - доступно любому аутентифицированному пользователю
   @Get(":id/interested-tenants")
   async getInterestedTenants(@Param("id") propertyId: string, @Request() req) {
     return await this.propertiesService.getInterestedTenants(
@@ -236,8 +227,7 @@ export class PropertiesController {
     type: [Property],
   })
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles("admin", "operator", "tenant")
+  @UseGuards(JwtAuthGuard) // Упрощено - доступно любому аутентифицированному пользователю
   @Get()
   async findAll(
     @Request() req,
@@ -283,8 +273,7 @@ export class PropertiesController {
   @ApiOperation({ summary: "Delete property (Operators and Admins)" })
   @ApiResponse({ status: 200, description: "Property deleted successfully" })
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles("operator", "admin")
+  @UseGuards(JwtAuthGuard) // Упрощено - доступно любому аутентифицированному пользователю
   @Delete(":id")
   async remove(@Param("id") id: string, @Request() req) {
     return await this.propertiesService.remove(id, req.user.id, req.user.roles);

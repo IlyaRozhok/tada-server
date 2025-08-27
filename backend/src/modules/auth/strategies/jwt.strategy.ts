@@ -27,22 +27,23 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException("Invalid token: no user ID");
     }
 
+    // Простая проверка пользователя
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ["preferences", "tenantProfile", "operatorProfile"],
-      // Remove select to get all fields
+      relations: ["tenantProfile", "operatorProfile"],
     });
 
     if (!user) {
       throw new UnauthorizedException("User not found");
     }
 
-    // Ensure the user object has all necessary computed properties
-    const userWithComputedFields = {
-      ...user,
+    // Возвращаем пользователя с базовой информацией
+    return {
+      id: user.id,
+      email: user.email,
       roles: user.roles,
+      tenantProfile: user.tenantProfile,
+      operatorProfile: user.operatorProfile,
     };
-
-    return userWithComputedFields;
   }
 }

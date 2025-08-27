@@ -13,7 +13,7 @@ async function bootstrap() {
   process.env.DB_PASSWORD = "password";
   process.env.DB_DATABASE = "rental_platform_test";
   process.env.JWT_SECRET = "your-super-secret-jwt-key-for-local-testing";
-  process.env.JWT_EXPIRES_IN = "7d";
+  process.env.JWT_ACCESS_EXPIRES_IN = "7d";
   process.env.PORT = "3002";
   process.env.NODE_ENV = "development";
 
@@ -36,7 +36,7 @@ async function bootstrap() {
     ],
     credentials: true,
   });
-
+  app.setGlobalPrefix("api");
   // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
@@ -60,7 +60,7 @@ async function bootstrap() {
   const port = process.env.PORT || 3002;
   await app.listen(port);
 
-  console.log(`✅ Backend is running on: http://localhost:${port}`);
+  console.log(`✅ Backend is running on: http://localhost:${port}/api`);
   console.log(`📚 Swagger docs: http://localhost:${port}/api/docs`);
   console.log(`🔗 Test database: ${process.env.DB_DATABASE}`);
   console.log("📝 Logs will appear below...\n");

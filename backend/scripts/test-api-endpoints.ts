@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3002/api";
+const BASE_URL = "http://localhost:3002";
 
 async function testEndpoints() {
   console.log("🧪 Testing API endpoints...\n");
@@ -8,16 +8,18 @@ async function testEndpoints() {
   try {
     // Test 1: Health check
     console.log("1️⃣ Testing health check...");
-    const healthResponse = await axios.get(`${BASE_URL}/health`);
+    const healthResponse = await axios.get(`${BASE_URL}/api/health`);
     console.log(
       `   ✅ Health check: ${healthResponse.status} - ${healthResponse.data.message || "OK"}`
     );
 
     // Test 2: Public properties endpoint
     console.log("\n2️⃣ Testing public properties endpoint...");
-    const propertiesResponse = await axios.get(`${BASE_URL}/properties/public`);
+    const propertiesResponse = await axios.get(
+      `${BASE_URL}/api/properties/public`
+    );
     console.log(
-      `   ✅ Properties: ${propertiesResponse.status} - Found ${propertiesResponse.data.data?.length || 0} properties`
+      `   ✅ Properties: ${healthResponse.status} - Found ${propertiesResponse.data.data?.length || 0} properties`
     );
 
     if (propertiesResponse.data.data?.length > 0) {
@@ -37,7 +39,7 @@ async function testEndpoints() {
     // Test 4: Test database connection through properties endpoint
     console.log("\n4️⃣ Testing database connection...");
     const dbTestResponse = await axios.get(
-      `${BASE_URL}/properties/public?limit=1`
+      `${BASE_URL}/api/properties/public?limit=1`
     );
     console.log(
       `   ✅ Database connection: ${dbTestResponse.status} - Success`

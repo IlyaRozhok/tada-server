@@ -23,8 +23,7 @@ import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User, UserRole } from "../../entities/user.entity";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
-import { Roles } from "../../common/decorators/roles.decorator";
-import { RolesGuard } from "../../common/guards/roles.guard";
+
 import { IsEmail, IsOptional, IsString } from "class-validator";
 import { CreateUserDto } from "./dto/create-user.dto";
 
@@ -99,10 +98,9 @@ export class UsersController {
   }
 
   @Get("")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles("admin")
+  @UseGuards(JwtAuthGuard) // Упрощено - доступно любому аутентифицированному пользователю
   @ApiBearerAuth("access-token")
-  @ApiOperation({ summary: "Get all users (admin only)" })
+  @ApiOperation({ summary: "Get all users" })
   @ApiResponse({ status: 200, description: "List of users", type: [User] })
   async getAllUsers(
     @Query("page") page = 1,
@@ -121,20 +119,18 @@ export class UsersController {
   }
 
   @Post("")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles("admin")
+  @UseGuards(JwtAuthGuard) // Упрощено - доступно любому аутентифицированному пользователю
   @ApiBearerAuth("access-token")
-  @ApiOperation({ summary: "Create user (admin only)" })
+  @ApiOperation({ summary: "Create user" })
   @ApiResponse({ status: 201, description: "User created", type: User })
   async adminCreateUser(@Body() dto: CreateUserDto): Promise<User> {
     return this.usersService.adminCreateUser(dto);
   }
 
   @Put(":id")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles("admin")
+  @UseGuards(JwtAuthGuard) // Упрощено - доступно любому аутентифицированному пользователю
   @ApiBearerAuth("access-token")
-  @ApiOperation({ summary: "Update user by id (admin only)" })
+  @ApiOperation({ summary: "Update user by id" })
   @ApiResponse({ status: 200, description: "User updated", type: User })
   async adminUpdateUser(
     @Param("id") id: string,
@@ -144,10 +140,9 @@ export class UsersController {
   }
 
   @Delete(":id")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles("admin")
+  @UseGuards(JwtAuthGuard) // Упрощено - доступно любому аутентифицированному пользователю
   @ApiBearerAuth("access-token")
-  @ApiOperation({ summary: "Delete user by id (admin only)" })
+  @ApiOperation({ summary: "Delete user by id" })
   @ApiResponse({ status: 200, description: "User deleted" })
   async adminDeleteUser(@Param("id") id: string): Promise<{ message: string }> {
     await this.usersService.adminDeleteUser(id);

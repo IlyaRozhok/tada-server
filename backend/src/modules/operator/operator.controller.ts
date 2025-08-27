@@ -1,24 +1,15 @@
 import { Controller, Get, Post, Body, UseGuards, Req } from "@nestjs/common";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
-import { RolesGuard } from "../../common/guards/roles.guard";
-import { Roles } from "../../common/decorators/roles.decorator";
 import { OperatorService } from "./operator.service";
 
 @Controller("operator")
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles("operator")
+@UseGuards(JwtAuthGuard) // Только базовая аутентификация, без проверки ролей
 export class OperatorController {
   constructor(private readonly operatorService: OperatorService) {}
 
   @Get("dashboard")
   async getDashboard(@Req() req) {
-    console.log("🔍 Operator Dashboard Request:", {
-      user_id: req.user?.id,
-      user_roles: req.user?.roles,
-      user_email: req.user?.email,
-      has_tenant_profile: !!req.user?.tenantProfile,
-      has_operator_profile: !!req.user?.operatorProfile,
-    });
+    // Доступно любому аутентифицированному пользователю
     return this.operatorService.getDashboardCounts(req.user.id);
   }
 

@@ -27,7 +27,7 @@ import { Preferences } from "../../entities/preferences.entity";
       useFactory: (configService: ConfigService) => ({
         secret: configService.get("JWT_SECRET", "your-secret-key"),
         signOptions: {
-          expiresIn: configService.get("JWT_ACCESS_EXPIRES_IN", "1d"),
+          expiresIn: configService.get("JWT_ACCESS_EXPIRES_IN", "7d"),
         },
       }),
       inject: [ConfigService],

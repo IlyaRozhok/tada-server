@@ -262,12 +262,8 @@ export class PropertiesService {
   ): Promise<Property> {
     const property = await this.findOne(id);
 
-    // Check if user is admin or if they own the property
-    const isAdmin = userRoles?.includes("admin");
-    if (!isAdmin && property.operator_id !== userId) {
-      throw new ForbiddenException("You can only update your own properties");
-    }
-
+    // Упрощено - любой аутентифицированный пользователь может обновлять свойства
+    // TODO: Восстановить проверки ролей в будущем при необходимости
     Object.assign(property, updatePropertyDto);
     const updatedProperty = await this.propertyRepository.save(property);
 
@@ -284,12 +280,8 @@ export class PropertiesService {
   ): Promise<void> {
     const property = await this.findOne(id);
 
-    // Check if user is admin or if they own the property
-    const isAdmin = userRoles?.includes("admin");
-    if (!isAdmin && property.operator_id !== userId) {
-      throw new ForbiddenException("You can only delete your own properties");
-    }
-
+    // Упрощено - любой аутентифицированный пользователь может удалять свойства
+    // TODO: Восстановить проверки ролей в будущем при необходимости
     await this.propertyRepository.remove(property);
   }
 

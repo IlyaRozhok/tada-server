@@ -39,7 +39,15 @@
     "test:user-flow": "ts-node scripts/test-user-flow.ts",
     "check:entities": "ts-node scripts/check-entities-vs-migration.ts",
     "start:local": "ts-node scripts/start-local-backend.ts",
-    "test:api": "ts-node scripts/test-api-endpoints.ts"
+    "test:api": "ts-node scripts/test-api-endpoints.ts",
+    "test:auth": "ts-node scripts/test-auth-flow.ts",
+    "test:jwt": "ts-node scripts/test-jwt-config.ts",
+    "test:jwt:simple": "ts-node scripts/test-jwt-simple.ts",
+    "check:env": "ts-node scripts/check-env.ts",
+    "fix:auth": "ts-node scripts/fix-auth-issues.ts",
+    "test:simple": "ts-node scripts/test-simple-auth.ts",
+    "test:simplified": "ts-node scripts/test-simplified-auth.ts",
+    "debug:403": "ts-node scripts/debug-403.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.842.0",

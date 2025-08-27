@@ -13,19 +13,19 @@ async function bootstrap() {
   app.use(require("express").json({ limit: "10mb" }));
   app.use(require("express").urlencoded({ limit: "10mb", extended: true }));
 
-  const origins = (process.env.CORS_ORIGINS ?? "")
+  const origins = (
+    process.env.CORS_ORIGINS ?? "http://localhost:3000,http://localhost:3001"
+  )
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
 
   app.enableCors({
     origin: origins,
-    credentials: false,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
   });
-
-  if (origins.length) {
-    app.enableCors({ origin: origins, credentials: false });
-  }
 
   app.setGlobalPrefix("api");
 

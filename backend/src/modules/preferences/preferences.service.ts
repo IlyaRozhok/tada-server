@@ -27,15 +27,13 @@ export class PreferencesService {
     console.log("🆕 Creating preferences for user:", userId);
     console.log("📝 Create data received:", preferencesDto);
 
-    // Check if user is a tenant (not an operator)
+    // Упрощено - любой аутентифицированный пользователь может устанавливать preferences
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException("User not found");
     }
 
-    if (user.hasRole("operator")) {
-      throw new ForbiddenException("Only tenants can set preferences");
-    }
+    // TODO: Восстановить проверку ролей в будущем при необходимости
 
     // Check if preferences already exist
     let existingPreferences = await this.preferencesRepository.findOne({

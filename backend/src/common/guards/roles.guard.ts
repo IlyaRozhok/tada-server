@@ -12,39 +12,25 @@ export class RolesGuard implements CanActivate {
       [context.getHandler(), context.getClass()]
     );
 
-    if (!requiredRoles) {
+    // Если роли не требуются, пропускаем
+    if (!requiredRoles || requiredRoles.length === 0) {
       return true;
     }
 
     const { user } = context.switchToHttp().getRequest();
 
-    console.log("🔍 RolesGuard check:", {
-      requiredRoles,
-      user_id: user?.id,
-      user_roles: user?.roles,
-      user_email: user?.email,
-    });
-
+    // Если пользователя нет, блокируем
     if (!user) {
-      console.log("❌ RolesGuard: No user in request");
       return false;
     }
 
-    // Проверяем, есть ли у пользователя хотя бы одна из требуемых ролей
-    if (user.roles) {
-      const userRolesArray = user.roles.split(",").map((r) => r.trim());
-      const hasRole = requiredRoles.some((role) =>
-        userRolesArray.includes(role)
-      );
-      console.log("✅ RolesGuard: User roles check", {
-        user_roles: user.roles,
-        userRolesArray,
-        hasRole,
-      });
-      if (hasRole) return true;
+    // Простая проверка роли
+    const userRole = user.roles;
+    if (!userRole) {
+      return false;
     }
 
-    console.log("❌ RolesGuard: User does not have required roles");
-    return false;
+    // Проверяем, есть ли у пользователя требуемая роль
+    return requiredRoles.includes(userRole);
   }
 }
